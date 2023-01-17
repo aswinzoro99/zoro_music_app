@@ -28,9 +28,11 @@ class _CustomTextFieldState extends BaseState<CustomTextField> {
       controller: widget.controller,
       keyboardType: widget.type,
       autocorrect: false,
-      enableInteractiveSelection: false,
+      enableInteractiveSelection: true,
       obscureText: widget.obscureText ?? false,
       decoration: InputDecoration(
+        alignLabelWithHint: true,
+        isDense: true,
         hintText: widget.hintText,
         suffix: widget.suffixIcon,
       ),

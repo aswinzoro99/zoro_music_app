@@ -16,7 +16,6 @@ abstract class BaseState<Page extends BaseScreen> extends State<Page> {
     super.dispose();
   }
 
-
   void onResume() {}
 
   void onPause() {}

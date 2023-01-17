@@ -14,10 +14,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-
+  another_flushbar: 1.12.29
   cupertino_icons: ^1.0.2
   carousel_indicator: ^1.0.6
-  email_validator: ^2.0.1
 
 dev_dependencies:
   flutter_test:

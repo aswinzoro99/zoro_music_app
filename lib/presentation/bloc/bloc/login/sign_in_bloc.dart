@@ -1,7 +1,7 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-import 'package:email_validator/email_validator.dart';
 
 import '../../../../core/base_bloc.dart';
 import '../../../../core/base_event.dart';
@@ -57,16 +57,6 @@ class SignInBloc extends BaseBloc<SignInEvent, SignInState> {
 
       return;
     }
-    if (EmailValidator.validate(usernameController.text)) {
-      emit(
-        state.copyWith(
-          errorMsg: 'Please enter a valid email',
-          status: SignInStatus.userInputError,
-        ),
-      );
-
-      return;
-    }
     if (passwordController.text.isEmpty) {
       emit(
         state.copyWith(
@@ -77,5 +67,7 @@ class SignInBloc extends BaseBloc<SignInEvent, SignInState> {
 
       return;
     }
+
+    emit(state.copyWith(msg: 'Login successful', status: SignInStatus.done));
   }
 }
