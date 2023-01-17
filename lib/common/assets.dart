@@ -7,6 +7,8 @@ class Assets {
   static const String pre_login2 = '$_basePath/per_login2.png';
   static const String pre_login3 = '$_basePath/pre_login3.png';
   static const String eye = '$_basePath/eye.svg';
+  static const String eye_closed = '$_basePath/eye_closed.svg';
+  static const String error = '$_basePath/error.svg';
 
   static const String splash = '$_basePath/splash.gif';
 }

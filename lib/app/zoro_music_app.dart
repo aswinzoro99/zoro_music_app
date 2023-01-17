@@ -1,8 +1,7 @@
-import 'package:advanced_flutter_projexct/presentation/pages/pre_login/pre_login_page.dart';
-import 'package:advanced_flutter_projexct/presentation/pages/splash_page/splash_page.dart';
 import 'package:flutter/material.dart';
 
 import '../common/constants.dart';
+import '../presentation/pages/splash_page/splash_page.dart';
 import '../theme/light_theme.dart';
 
 class ZoroMusicApp extends StatefulWidget {

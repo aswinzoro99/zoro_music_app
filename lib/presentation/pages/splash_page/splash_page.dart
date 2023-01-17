@@ -1,7 +1,11 @@
+import 'package:advanced_flutter_projexct/extensions/context_extension.dart';
+import 'package:advanced_flutter_projexct/extensions/text_style_extension.dart';
 import 'package:advanced_flutter_projexct/presentation/pages/pre_login/pre_login_page.dart';
+import 'package:advanced_flutter_projexct/theme/light_theme_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/assets.dart';
+import '../../../common/dimensions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,16 +17,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreen extends State<SplashScreen> {
-  int splashtime = 3;
+  int splashTime = 3;
+
   // duration of splash screen on second
 
   @override
   void initState() {
-    Future.delayed(Duration(seconds: splashtime), () async {
+    Future.delayed(Duration(seconds: splashTime), () async {
       Navigator.pushReplacement(context, MaterialPageRoute(
-          //pushReplacement = replacing the route so that
-          //splash screen won't show on back button press
-          //navigation to Home page.
           builder: (context) {
         return const PreLoginPage();
       }));
@@ -34,36 +36,26 @@ class _SplashScreen extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      backgroundColor: white,
+      body: Stack(
         alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          //vertically align center
-          children: <Widget>[
-            SizedBox(
-                height: 200, width: 200, child: Image.asset(Assets.splash)),
-            Container(
-              margin: const EdgeInsets.only(top: 30),
-              //margin top 30
-              child: const Text(
-                "Zoro Music App",
-                style: TextStyle(
-                  fontSize: 30,
-                ),
+        children: <Widget>[
+          SizedBox(
+            height: context.maxHeight,
+            width: context.maxWidth,
+            child: Image.asset(Assets.splash),
+          ),
+          Positioned(
+            bottom: dp15,
+            child: Text(
+              'version 1.0.0',
+              style: TextStyle(
+                color: grey1,
+                fontSize: sp11,
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 15),
-              child: const Text(
-                "Version: 1.0.0",
-                style: TextStyle(
-                  color: Colors.black45,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -19,6 +19,8 @@ class PreLoginPage extends BaseScreen {
 }
 
 class _PreLoginPageState extends BaseState<PreLoginPage> {
+  var isLastPage = false;
+  var currentIndex = 0;
   final _demo = [
     Container(
       padding: EdgeInsets.zero,
@@ -37,6 +39,7 @@ class _PreLoginPageState extends BaseState<PreLoginPage> {
     ),
   ];
   int pageIndex = 0;
+  final controller = PageController();
 
   @override
   void initState() {
@@ -72,7 +75,7 @@ class _PreLoginPageState extends BaseState<PreLoginPage> {
                       ),
                       SizedBox(height: dp12),
                       Text(
-                        'Search, get and save your favorit music on your playlist make',
+                        'Search, get and save your favourite music on your playlist make',
                         style: context.textTheme.titleLarge!.regular
                             .copyWith(fontSize: sp16, color: grey2),
                         textAlign: TextAlign.center,
@@ -94,61 +97,101 @@ class _PreLoginPageState extends BaseState<PreLoginPage> {
   Padding buildSignInActions(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: paddingLarge2),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shadowColor: Colors.transparent,
-                backgroundColor: white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: paddingLarge1,
-                  vertical: paddingRegular1,
+      child: isLastPage
+          ? Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shadowColor: Colors.transparent,
+                      backgroundColor: white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: paddingLarge1,
+                        vertical: paddingRegular1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: dialogButtonBorderRadius),
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()),
+                    ),
+                    child: Text(
+                      'Sign In',
+                      style: context.textTheme.bodyMedium!.bold.copyWith(
+                        color: black,
+                        fontSize: sp16,
+                      ),
+                    ),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: dialogButtonBorderRadius),
-              ),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignInPage()),
-              ),
-              child: Text(
-                'Sign In',
-                style: context.textTheme.bodyMedium!.bold.copyWith(
-                  color: black,
-                  fontSize: sp16,
+                SizedBox(width: dp30),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shadowColor: Colors.transparent,
+                      backgroundColor: primary,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: paddingLarge1,
+                        vertical: paddingRegular1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: dialogButtonBorderRadius),
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpPage()),
+                    ),
+                    child: Text(
+                      'Sign Up',
+                      style: context.textTheme.bodyMedium!.bold.copyWith(
+                        color: white,
+                        fontSize: sp16,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shadowColor: Colors.transparent,
+                      backgroundColor: primary,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: paddingLarge1,
+                        vertical: paddingRegular1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: dialogButtonBorderRadius),
+                    ),
+                    onPressed: () => setState(() {
+                      if (currentIndex != 2) {
+                        currentIndex = currentIndex + 1;
+                        controller.animateToPage(
+                          currentIndex,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.linear,
+                        );
+                      } else {
+                        currentIndex = 0;
+                      }
+                    }),
+                    child: Text(
+                      'Next',
+                      style: context.textTheme.bodyMedium!.bold.copyWith(
+                        color: white,
+                        fontSize: sp16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          SizedBox(width: dp30),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shadowColor: Colors.transparent,
-                backgroundColor: primary,
-                padding: EdgeInsets.symmetric(
-                  horizontal: paddingLarge1,
-                  vertical: paddingRegular1,
-                ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: dialogButtonBorderRadius),
-              ),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignUpPage()),
-              ),
-              child: Text(
-                'Sign Up',
-                style: context.textTheme.bodyMedium!.bold.copyWith(
-                  color: white,
-                  fontSize: sp16,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -159,10 +202,17 @@ class _PreLoginPageState extends BaseState<PreLoginPage> {
           height: context.maxHeight * 0.50,
           width: double.infinity,
           child: PageView(
+            controller: controller,
             children: _demo,
             onPageChanged: (index) {
               setState(() {
-                pageIndex = index;
+                currentIndex = index;
+                pageIndex = currentIndex;
+                if (index == 2) {
+                  isLastPage = true;
+                } else {
+                  isLastPage = false;
+                }
               });
             },
           ),

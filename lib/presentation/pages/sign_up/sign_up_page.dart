@@ -154,7 +154,12 @@ class _SignUpPageState extends BaseState<SignUpPage> {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SignInPage()),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const SignInPage(),
+        transitionDuration: const Duration(milliseconds: 100),
+        transitionsBuilder: (_, a, __, c) =>
+            FadeTransition(opacity: a, child: c),
+      ),
     );
   }
 }

@@ -1,5 +1,8 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:advanced_flutter_projexct/presentation/pages/sign_up/sign_up_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../common/assets.dart';
@@ -7,6 +10,7 @@ import '../../../common/dimensions.dart';
 import '../../../extensions/context_extension.dart';
 import '../../../extensions/text_style_extension.dart';
 import '../../../theme/light_theme_colors.dart';
+import '../../bloc/bloc/login/sign_in_bloc.dart';
 import '../../widgets/text_field.dart';
 
 class SignInPage extends StatefulWidget {
@@ -18,67 +22,108 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final controller = TextEditingController();
+  late final SignInBloc bloc;
+
+  @override
+  void initState() {
+    bloc = BlocProvider.of<SignInBloc>(context);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: background,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
+    return BlocListener<SignInBloc, SignInState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == SignInStatus.userInputError) {
+          final snackBar = SnackBar(
+            backgroundColor: Colors.red,
+            content: Row(
               children: [
-                Container(
-                  padding: EdgeInsets.zero,
-                  width: double.infinity,
-                  child: Image.asset(Assets.pre_login2),
+                SvgPicture.asset(
+                  Assets.error,
+                  height: dp24,
+                  color: white,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(paddingRegular1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        ' Sign In',
-                        textAlign: TextAlign.left,
-                        style: context.textTheme.headline4!.bold
-                            .copyWith(fontSize: sp22, color: black),
-                      ),
-                      SizedBox(height: paddingRegular1),
-                      CustomTextField(
-                        hintText: 'Enter your email',
-                        controller: TextEditingController(),
-                      ),
-                      SizedBox(height: paddingSmall1),
-                      CustomTextField(
-                        hintText: 'Enter your password',
-                        suffixIcon: buildPasswordSuffix(),
-                        controller: TextEditingController(),
-                        obscureText: true,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Forgot password',
-                              style: context.textTheme.bodyMedium!.semiBold
-                                  .copyWith(
-                                color: primary,
-                                fontSize: sp16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                SizedBox(width: paddingSmall2),
+                const Text('Invalid credentials!'),
               ],
             ),
-            buildSignInButton(),
-          ],
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: background,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.zero,
+                    width: double.infinity,
+                    child: Image.asset(Assets.pre_login2),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(paddingMedium1),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          ' Sign In',
+                          textAlign: TextAlign.left,
+                          style: context.textTheme.headline4!.bold
+                              .copyWith(fontSize: sp22, color: black),
+                        ),
+                        SizedBox(height: paddingRegular1),
+                        CustomTextField(
+                          hintText: 'Enter your email',
+                          controller: bloc.usernameController,
+                        ),
+                        SizedBox(height: paddingSmall1),
+                        BlocBuilder<SignInBloc, SignInState>(
+                          buildWhen: (previous, current) =>
+                              previous.showPassword != current.showPassword,
+                          builder: (context, state) {
+                            return CustomTextField(
+                              hintText: 'Enter your password',
+                              suffixIcon: buildPasswordSuffix(),
+                              controller: bloc.passwordController,
+                              obscureText: state.showPassword,
+                            );
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'Forgot password',
+                                style: context.textTheme.bodyMedium!.semiBold
+                                    .copyWith(
+                                  color: primary,
+                                  fontSize: sp16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              buildSignInButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -86,9 +131,9 @@ class _SignInPageState extends State<SignInPage> {
 
   InkWell buildPasswordSuffix() {
     return InkWell(
-      onTap: () {},
+      onTap: () => bloc.add(ShowPassword()),
       child: SvgPicture.asset(
-        Assets.eye,
+        bloc.state.showPassword ? Assets.eye : Assets.eye_closed,
         height: dp24,
         color: grey3,
       ),
@@ -101,7 +146,7 @@ class _SignInPageState extends State<SignInPage> {
       left: 0,
       right: 0,
       child: Padding(
-        padding: EdgeInsets.all(bodyLarge),
+        padding: EdgeInsets.all(paddingMedium1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -119,7 +164,7 @@ class _SignInPageState extends State<SignInPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    onPressed: () {},
+                    onPressed: () => bloc.add(OnSignInEvent()),
                     child: Text(
                       'Sign Up',
                       style: context.textTheme.bodyMedium!.bold.copyWith(
@@ -163,7 +208,12 @@ class _SignInPageState extends State<SignInPage> {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SignUpPage()),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const SignUpPage(),
+        transitionDuration: const Duration(milliseconds: 100),
+        transitionsBuilder: (_, a, __, c) =>
+            FadeTransition(opacity: a, child: c),
+      ),
     );
   }
 }
